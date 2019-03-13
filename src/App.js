@@ -12,7 +12,7 @@ import Rank from './components/Rank/Rank';
 
 /** Moved to backend
 const app = new Clarifai.App({
- apiKey: '0ecd76d27bbf43aa84f94cfb2e7140ba'
+ apiKey: 'You must add your clarifai key'
 });
 */
 const particlesOptions = {
@@ -46,7 +46,7 @@ const particlesOptions = {
 const initialState = {
       input: '',
       imageUrl: '',
-      box: '',
+      box: [],
       route:'signin',
       isSignedIn: false,
       user:{
@@ -76,18 +76,25 @@ loadUser = (data)=>{
 }
 
 
+
 calculateFaceLocation = (data) => {
-  const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-  const image = document.getElementById('inputimage');
-  const width = Number(image.width);
-  const height = Number(image.height);
-  return {
-    leftCol: clarifaiFace.left_col * width,
-    topRow: clarifaiFace.top_row * height,
-    rightCol: width - (clarifaiFace.right_col * width),
-    bottomRow: height - (clarifaiFace.bottom_row * height)
+     const image = document.getElementById('inputimage');
+     const width = Number(image.width);
+     const height = Number(image.height);
+     let iter = data.outputs[0].data.regions.map((face) => {
+            const clarifaiFace = face.region_info.bounding_box;
+            return {
+              leftCol: clarifaiFace.left_col * width,
+              topRow: clarifaiFace.top_row * height,
+              rightCol: width - (clarifaiFace.right_col * width),
+              bottomRow: height - (clarifaiFace.bottom_row * height)
+            }
+          })
+   
+     return iter;
   }
-}
+
+
 
 displayFaceBox = (box) => {
   //console.log(box);
@@ -103,8 +110,8 @@ onPictureSubmit = () => {
  /** Moved to backend
   app.models.predict(
     Clarifai.FACE_DETECT_MODEL, 
-    this.state.input)*/
-  fetch('http://localhost:3000/imageUrl',{
+    this.state.input)*/   
+  fetch('https://serene-sea-11655.herokuapp.com/imageUrl',{
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -114,7 +121,7 @@ onPictureSubmit = () => {
  .then(response => response.json())
   .then(response => {
     if (response) {
-      fetch('http://localhost:3000/image',{
+      fetch('https://serene-sea-11655.herokuapp.com/image',{
         method: 'put',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({  
