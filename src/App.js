@@ -111,7 +111,7 @@ onPictureSubmit = () => {
   app.models.predict(
     Clarifai.FACE_DETECT_MODEL, 
     this.state.input)*/   
-  fetch('https://serene-sea-11655.herokuapp.com/imageUrl',{
+  fetch('http://localhost:3000/imageUrl',{
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -121,7 +121,7 @@ onPictureSubmit = () => {
  .then(response => response.json())
   .then(response => {
     if (response) {
-      fetch('https://serene-sea-11655.herokuapp.com/image',{
+      fetch('http://localhost:3000/image',{
         method: 'put',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({  
